@@ -8,7 +8,7 @@ public class Sophomore extends Herbivore {
 
     public Sophomore() {
         super();
-        metabolicConsumption = 500;
+        metabolicConsumption = 350;
     }
 
     @Override
@@ -29,19 +29,23 @@ public class Sophomore extends Herbivore {
 
     @Override
     protected int ageOfSexualMaturity() {
-        return YEAR / 2; //1 Year Old 
+        if (!isMale()) {
+            return YEAR / 5;
+        }
+
+        return 2 * YEAR / 11;
     }
 
     @Override
     protected int gestationTime() {
 
-        return (getRandom().nextInt(6) + 35); //35 - 40 days
+        return (getRandom().nextInt(15) + 14); //2 - 4 weeks
     }
 
     @Override
     protected int litterSize() {
 
-        return (getRandom().nextInt(3) + 2); //2 - 4 hares
+        return (getRandom().nextInt(16) + 15); //15 - 30 not hares
     }
 
     @Override
@@ -78,16 +82,34 @@ public class Sophomore extends Herbivore {
 
     @Override
     public String getName() {
-        return "Guppy";
+        return "Sophomore";
     }
 
     @Override
     protected Turn userDefinedChooseMove() {
-        List<Animal> others = getCell().getOtherAnimals(this);
-        for (Animal ani : others) {
-            if (checkMateability(ani) && (getArena().getViewer().getSeason() == Season.SPRING)) {
+        List<Animal> others = getArena().getAllAnimals(this);
+
+        if (!isMale()) {
+            Animal possibleMate = null;
+            for (Animal ani : others) {
+                if (checkMateability(ani)) {// && (getArena().getViewer().getSeason() == Season.SPRING)) {
+                    if (getDesireLevel(ani) > getDesireLevel(possibleMate)) {
+                        possibleMate = ani;
+                    }
+                }
+            }
+
+            if (possibleMate != null && possibleMate.getCell() == getCell()) {
+                return new Mate(possibleMate);
+            } else if(possibleMate != null){
+                return new MoveToward(getCell(), possibleMate.getCell(), true);
+            }
+        } else if(getCell().getOtherAnimals(this).size() != 0) {
+            Animal ani = getCell().getOtherAnimals(this).get(getRandom().nextInt(getCell().getOtherAnimals(this).size()));
+            if (checkMateability(ani)) {
                 return new Mate(ani);
             }
+
         }
 
         if ((getCell().howMuchFood() > energyToEat() && (getConsumptionThisDay() / maxEnergyStoragePerDay()) < 1 && getEnergyReserve() / maxEnergyStorage() < (1.0 - 1.0 / turnEnergyMax())) || getEnergyReserve() / maxEnergyStorage() < .05) {
@@ -154,7 +176,7 @@ public class Sophomore extends Herbivore {
                 brightness = 1;
             }
 
-            graph.setColor(Color.getHSBColor(295f / 360, 1f, brightness));
+            graph.setColor(Color.getHSBColor(230f / 360, 1f, brightness));
 
             double size = getGenotype().getGene(GeneType.SPOT_SIZE) / 2;
             if (size < 0) {
@@ -165,6 +187,7 @@ public class Sophomore extends Herbivore {
             int sizeX = (int) Math.round(size * getXSize());
             int sizeY = (int) Math.round(size * getYSize());
             graph.fillOval(x + sizeX, y + sizeY, getXSize() - (2 * sizeX - 1), getYSize() - (2 * sizeY - 1));
+//            System.err.println(x + sizeX);
         }
     }
 

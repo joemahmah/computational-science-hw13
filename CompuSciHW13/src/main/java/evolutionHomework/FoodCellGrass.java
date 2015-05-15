@@ -15,7 +15,7 @@ public class FoodCellGrass extends FoodCell{
 
     public FoodCellGrass(Arena map, int x, int y) {
         super(map, x, y);
-        this.FOOD_MAX = 4000;
+        this.FOOD_MAX = 8000;
         this.GROWTH_PER_TURN = FOOD_MAX/14.0;
     }
 
@@ -39,13 +39,14 @@ public class FoodCellGrass extends FoodCell{
         
         switch(currentSeason){
             case WINTER:
-                GROWTH_PER_TURN = FOOD_MAX/75;
+                GROWTH_PER_TURN = FOOD_MAX/65;
                 break;
             case SPRING:
                 GROWTH_PER_TURN = FOOD_MAX/20.0;
                 break;
             case SUMMER:
                 GROWTH_PER_TURN = FOOD_MAX/14;
+                break;
             case FALL:
                 GROWTH_PER_TURN = FOOD_MAX/30;
         }

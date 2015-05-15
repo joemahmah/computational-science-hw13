@@ -395,6 +395,16 @@ public class Arena implements Drawable {
 
     }
 
+    public List<Animal> getAllAnimals() {
+        List<Animal> response = new ArrayList<>();
+
+        for (Cell icell : map.values()) {
+            response.addAll(icell.getOtherAnimals(null));
+        }
+
+        return response;
+    }
+
     /**
      * Returns a list of all the Animals in the Arena, sorted with the closest
      * ones first

@@ -31,7 +31,7 @@ abstract public class Animal implements Drawable {
     private boolean performedAction = false;
 
     // This determines the width of the border around the animal when drawn
-    static private final double sizeScale = .15;
+    static public final double sizeScale = .15;
 
     private int age = 0;
 
@@ -76,7 +76,7 @@ abstract public class Animal implements Drawable {
     private void addGenotype(Genotype genotype) {
         this.genotype = genotype;
     }
-    
+
     public double getConsumptionThisDay() {
         return consumptionThisDay;
     }
@@ -125,7 +125,7 @@ abstract public class Animal implements Drawable {
     abstract protected double maxEnergyStoragePerDay();
 
     abstract protected double turnEnergyMax();
-    
+
     /**
      * @return The amount of energy required to mate
      */
@@ -559,5 +559,28 @@ abstract public class Animal implements Drawable {
      */
     static protected Random getRandom() {
         return Arena.getRandom();
+    }
+
+    public static double getDesireLevel(Animal animal) {
+        if (animal == null) {
+            return -1;
+        }
+
+        double spotLevel = animal.getGenotype().getGene(GeneType.SPOT_SIZE);
+        double spotBrightness = animal.getGenotype().getGene(GeneType.SPOT_BRIGHTNESS);
+        double mod = 1;
+
+        if (animal.getCell() instanceof FoodCellWood) {
+            FoodCellWood woodCell = (FoodCellWood) animal.getCell();
+            if (Math.abs(animal.getGenotype().getGene(GeneType.SPOT_SIZE) - woodCell.getCamoThreshold()) < .1) {
+                mod *= .666;
+            }
+
+            if (Math.abs(animal.getGenotype().getGene(GeneType.SPOT_BRIGHTNESS) - woodCell.getCamoThreshold()) < .1) {
+                mod *= .666;
+            }
+        }
+
+        return Math.pow(spotLevel + spotBrightness, 3) * mod;
     }
 }

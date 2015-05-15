@@ -29,6 +29,8 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
     private Arena map;
     private LeaderBoard leaderBoard;
     private TimelineBoard timelines;
+    private HistogramBoard histogramBoard;
+    private boolean paused;
     /**
      * This determines the size of the bar along the bottom of the view.
      */
@@ -50,7 +52,7 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
         }
 
         for (int i = 0; i < animalCount; ++i) {
-            Animal newAnimal = type.newInstance();
+            Animal newAnimal = Animal.makeRandomAnimal(type);
             newAnimal.randAge();
             animals.add(newAnimal);
         }
@@ -84,6 +86,7 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
     public Viewer(Arena mymap, double timeIncrement) {
 
         currentDay = 0;
+        paused = false;
 
         addMouseListener(this);
         map = mymap;
@@ -93,6 +96,8 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
 
         leaderBoard = new LeaderBoard(mymap);
         timelines = new TimelineBoard(mymap, timeIncrement);
+        Genotype geno = map.getAllAnimals().get(0).getGenotype();
+        histogramBoard = new HistogramBoard(mymap, geno);
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,6 +110,12 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
         frame2.add(timelines);
         frame2.setSize(timelines.getWidth(), timelines.getHeight());
         frame2.setVisible(true);
+
+        JFrame frame3 = new JFrame();
+        frame3.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame3.add(histogramBoard);
+        frame3.setSize(histogramBoard.getWidth(), histogramBoard.getHeight());
+        frame3.setVisible(true);
     }
 
     /**
@@ -116,8 +127,21 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
     public void setTimer(int increment) { // in milliseconds
         Timer time = new Timer(increment, this);
         time.addActionListener(leaderBoard);
+        time.addActionListener(histogramBoard);
         time.addActionListener(timelines);
         time.start();
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void unpause() {
+        paused = false;
+    }
+
+    public void togglePause() {
+        paused = !paused;
     }
 
     /**
@@ -125,11 +149,22 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
      * received.
      */
     private void doStuff() {
-        if (map.doTurn()) {
-            repaint();
-            currentDay++;
-        } else {
-            close();
+        if (!paused) {
+            if (map.doTurn()) {
+                repaint();
+                currentDay++;
+                addEntities();
+            } else {
+                close();
+            }
+        }
+    }
+    
+    private  void addEntities(){
+        if(animalsToAdd.containsKey(getDay())){
+            for(Animal animal: animalsToAdd.get(getDay())){
+                map.addRandomAnimal(animal);
+            }
         }
     }
 
@@ -172,7 +207,8 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
     // Only the mouseClick event is caught
     @Override
     public void mouseClicked(MouseEvent arg0) {
-        doStuff();
+//        doStuff();
+        togglePause();
     }
 
     @Override
@@ -185,10 +221,12 @@ public class Viewer extends JPanel implements MouseListener, ActionListener {
 
     @Override
     public void mousePressed(MouseEvent arg0) {
+//        pause();
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0) {
+//        unpause();
     }
 
     // This is raised by the Timer object

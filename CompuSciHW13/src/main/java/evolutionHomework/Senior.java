@@ -13,9 +13,9 @@ import java.util.List;
  *
  * @author mhrcek
  */
-public class Lynx extends Carnivore {
+public class Senior extends Carnivore {
 
-    public Lynx() {
+    public Senior() {
         super();
         metabolicConsumption = 300;
         turnsPerDay = 18;
@@ -83,58 +83,59 @@ public class Lynx extends Carnivore {
 
     @Override
     public String getName() {
-        return "Lynx";
+        return "Senior";
     }
 
     @Override
     protected Turn userDefinedChooseMove() {
-//        List<Animal> others = getCell().getOtherAnimals(this);
-//        List<Animal> nearbyAnimals = getNearbyAnimals();
-//        List<Animal> nearbyPrey = new ArrayList<>();
-//        List<Animal> nearbyMates = new ArrayList<>();
-//
-//        for (Animal animal : nearbyAnimals) {
-//            if (isPrey(animal)) {
-//                nearbyPrey.add(animal);
-//            }
-//            if (animal instanceof Lynx) {
-//                if (checkMateability(animal)) {
-//                    nearbyMates.add(animal);
-//                }
-//            }
-//        }
-//
-//        //Check if can mate
-//        for (Animal ani : others) {
-//            if (checkMateability(ani) && (getArena().getViewer().getSeason() == Season.WINTER) && getEnergyReserve()/maxEnergyStorage() > .75) {
-//                return new Mate(ani);
-//            }
-//        }
-//
-//        //Check if can eat now
-//        if (others.size() > 0) {
+        List<Animal> others = getCell().getOtherAnimals(this);
+        List<Animal> nearbyAnimals = getArena().getAllAnimals(this);
+        List<Animal> nearbyPrey = new ArrayList<>();
+        List<Animal> nearbyMates = new ArrayList<>();
+
+        for (Animal animal : nearbyAnimals) {
+            if (isPrey(animal)) {
+                nearbyPrey.add(animal);
+            }
+            if (animal instanceof Senior) {
+                if (checkMateability(animal)) {
+                    nearbyMates.add(animal);
+                }
+            }
+        }
+
+        //Check if can mate
+        for (Animal ani : others) {
+            if (checkMateability(ani) && getEnergyReserve()/maxEnergyStorage() > .75) {
+                return new Mate(ani);
+            }
+        }
+
+        //Check if can eat now
+        if (others.size() > 0) {
 //            for (Animal possiblePrey : others) {
 //                if (isPrey(possiblePrey)) {
 //                    return new CarnivoreEat(possiblePrey);
 //                }
 //            }
-//        }
-//
-//        //Check if mate near
-//        if (nearbyMates.size() > 0 && getArena().getViewer().getSeason() == Season.WINTER) {
-//            return new Move(pathTo(nearbyMates.get(0)));
-//        }
-//
-//        //Check if food near
-//        if (nearbyPrey.size() > 0) {
-//            return new Move(pathTo(nearbyPrey.get(0)));
-//        }
+            
+            Animal possiblePrey = null;
+            for (Animal prey : others) {
+                if (isPrey(prey)) {
+                    if (getDesireLevel(prey) > getDesireLevel(possiblePrey)) {
+                        possiblePrey = prey;
+                    }
+                }
+            }
 
-//        if (Arena.getRandom().nextBoolean()) {
-            return new Move(Direction.randomDirection());
-//        } else {
-//            return new Sleep();
-//        }
+            if (possiblePrey != null && possiblePrey.getCell() == getCell()) {
+                return new CarnivoreEat(possiblePrey);
+            } else if(possiblePrey != null){
+                return new MoveToward(getCell(), possiblePrey.getCell(), true);
+            }
+        }
+        
+        return new Move(Direction.randomDirection());
     }
 
     @Override
@@ -151,7 +152,7 @@ public class Lynx extends Carnivore {
 //        }
 //        return Color.BLUE;
 //        if (Arena.getRandom().nextBoolean()) {
-        return Color.RED;
+        return Color.BLACK;
 //        } else if (Arena.getRandom().nextBoolean()) {
 //            return Color.RED;
 //        } else {
@@ -166,7 +167,8 @@ public class Lynx extends Carnivore {
 
     @Override
     protected void randomGenes(List<Gene> genes) {
-        
+        genes.add(new Gene(GeneType.SPOT_SIZE, .5, 0));
+        genes.add(new Gene(GeneType.SPOT_BRIGHTNESS, .5, 0));
     }
 
 }

@@ -17,7 +17,7 @@ public class Timeline implements Serializable {
 	
 	private String name;
 	private Color color;
-	private List<Integer> timeline = new ArrayList<>();
+	private List<Double> timeline = new ArrayList<>();
 	
 	public Timeline(String name, Color color) {
 		this.name = name;
@@ -32,7 +32,7 @@ public class Timeline implements Serializable {
 		return color;
 	}
 	
-	public void addPoint(int population) {
+	public void addPoint(double population) {
 		timeline.add(population);
 	}
 	
@@ -40,9 +40,9 @@ public class Timeline implements Serializable {
 		return timeline.size();
 	}
 	
-	public int getMax() {
-		int max = 0;
-		for (Integer ii : timeline) {
+	public double getMax() {
+		double max = 0;
+		for (Double ii : timeline) {
 			if (ii > max) {
 				max = ii;
 			}
@@ -52,14 +52,14 @@ public class Timeline implements Serializable {
 	
 	static private int circleRadius = 5;
 
-	public void paint(Graphics g, Rectangle grid, int max) {
+	public void paint(Graphics g, Rectangle grid, double max) {
 		g.setColor(getColor());
 		
 		double divisionSize = (double)grid.getWidth() / getSize();
 		double currentLocation = grid.getMinX();
 		Point formerLocation = new Point(0, 0);
 		
-		for (Integer point : timeline) {
+		for (Double point : timeline) {
 			double x = currentLocation;
 			double y = grid.getMaxY() - (double)(point) / max * grid.getHeight();
 

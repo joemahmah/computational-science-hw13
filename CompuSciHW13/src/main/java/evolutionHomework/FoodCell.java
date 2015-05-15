@@ -38,7 +38,7 @@ public abstract class FoodCell extends Cell {
             foodAmount = FOOD_MAX * Arena.getRandom().nextDouble();
         }
 
-        adjustForSeason();
+//        adjustForSeason();
         foodAmount += GROWTH_PER_TURN * (Arena.getRandom().nextDouble() + .5); //Fluxuates growth rates
         if (foodAmount > FOOD_MAX) {
             foodAmount = FOOD_MAX;

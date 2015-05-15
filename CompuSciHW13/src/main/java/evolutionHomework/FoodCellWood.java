@@ -13,15 +13,24 @@ import java.awt.Color;
  */
 public class FoodCellWood extends FoodCell {
 
+    private float camoThreshold;
+    
     public FoodCellWood(Arena map, int x, int y) {
         super(map, x, y);
         this.FOOD_MAX = 30000;
         this.GROWTH_PER_TURN = (double) FOOD_MAX / 200.0;
+        this.camoThreshold = .5f;
     }
 
+    public float getCamoThreshold(){
+        return camoThreshold;
+    }
+    
     @Override
     protected Color getColor() {
         double brightness = 1 - ((double) foodAmount / FOOD_MAX * 200 / 240);
+        
+//        double brightness = getCamoThreshold();
         float color = 75.0f/240;
         
         if(getMap().getViewer().getSeason() == Season.WINTER){
@@ -39,15 +48,16 @@ public class FoodCellWood extends FoodCell {
         
         switch(currentSeason){
             case WINTER:
-                GROWTH_PER_TURN = 0;
+                GROWTH_PER_TURN = FOOD_MAX/1000;
                 break;
             case SPRING:
                 GROWTH_PER_TURN = FOOD_MAX/80;
                 break;
             case SUMMER:
                 GROWTH_PER_TURN = FOOD_MAX/250;
+                break;
             case FALL:
-                GROWTH_PER_TURN = FOOD_MAX/1000;
+                GROWTH_PER_TURN = FOOD_MAX/800;
         }
     }
 

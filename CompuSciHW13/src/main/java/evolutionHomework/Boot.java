@@ -22,17 +22,18 @@ public class Boot {
     public static void main(String args[]) throws InstantiationException, IllegalAccessException {
 
         // These control the size of the grid
-        final int xSize = 40;
-        final int ySize = 25;
-        final int cellSize = 25;
+        final int xSize = 30;
+        final int ySize = 30;
+        final int cellSize = 18;
 
-        final int nHerbivore = 100;
+        final int sophomores = 80;
+        final int seniors = 6;
 
         Arena mymap = new Arena(xSize, ySize, cellSize);
 
         for (int ix = 0; ix < mymap.getXDim(); ++ix) {
             for (int iy = 0; iy < mymap.getYDim(); ++iy) {
-                if (Animal.getRandom().nextInt(100) < 15) {
+                if (Animal.getRandom().nextInt(100) < 30) {
                     mymap.changeCell(ix, iy, new FoodCellWood(mymap, ix, iy));
                 } else {
                     mymap.changeCell(ix, iy, new FoodCellGrass(mymap, ix, iy));
@@ -48,9 +49,15 @@ public class Boot {
 //            mymap.changeCell(ix, mymap.getYDim() / 2, new WallCell(mymap, ix, mymap.getYDim() / 2));
 //        }
 
-        addAnimal(mymap, nHerbivore, Sophomore.class);
+        addAnimal(mymap, sophomores, Sophomore.class);
+        addAnimal(mymap, seniors, Senior.class);
 
+        
         Viewer.runViewer(mymap, TIME_INCREMENT, TIMER_SPEED);
+        Viewer.queAddOnDay(sophomores/2, Sophomore.class, 50);
+        Viewer.queAddOnDay(sophomores, Sophomore.class, 100);
+        Viewer.queAddOnDay(sophomores, Sophomore.class, 200);
+        Viewer.queAddOnDay(sophomores, Sophomore.class, 300);
     }
 
 }
